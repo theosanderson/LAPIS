@@ -1,0 +1,32 @@
+@startuml
+
+actor Enduser
+actor "Maintainer" as maintainer
+
+
+
+node "External Data" as externalData {
+    component Preprocessing
+    database "GISAID/GenBank" as rawData
+}
+
+
+component LAPISv2 {
+    [LAPIS]
+    [SILO]
+}
+
+
+collections "Sequence data\n on disk" as InputData
+
+
+rawData -d-> Preprocessing
+Preprocessing -d-> InputData
+
+Enduser <-> LAPISv2: request/receive filtered data
+InputData -d-> LAPISv2
+
+maintainer -down-> LAPISv2: configures instance
+maintainer -r-> externalData: triggers build of new data
+
+@enduml
