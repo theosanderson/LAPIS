@@ -76,18 +76,10 @@ class SiloClientTest(
             response()
                 .withContentType(MediaType.APPLICATION_JSON_UTF_8)
                 .withBody(
-                    """{
-                        "queryResult": [
-                            {
-                              "count": 6,
-                              "division": "Aargau"
-                            },
-                            {
-                              "count": 8,
-                              "division": "Basel-Land"
-                            }
-                        ]
-                    }""",
+                    """
+                        {"count": 6,"division": "Aargau"}
+                        {"count": 8,"division": "Basel-Land"}
+                    """,
                 ),
         )
 
@@ -108,34 +100,16 @@ class SiloClientTest(
     @ParameterizedTest
     @MethodSource("getMutationActions")
     fun `given server returns mutations response then response can be deserialized`(
-        action: SiloAction<List<MutationData>>,
+        action: SiloAction<MutationData>,
     ) {
         expectQueryRequestAndRespondWith(
             response()
                 .withContentType(MediaType.APPLICATION_JSON_UTF_8)
                 .withBody(
-                    """{
-                        "queryResult": [
-                            {
-                                "count": 51,
-                                "mutation": "C3037T",
-                                "mutationFrom": "C",
-                                "mutationTo": "T",
-                                "position": 3037,
-                                "proportion": 1,
-                                "sequenceName": "main"
-                            },
-                            {
-                                "count": 52,
-                                "mutation": "C14408T",
-                                "mutationFrom": "C",
-                                "mutationTo": "T",
-                                "position": 14408,
-                                "proportion": 1,
-                                "sequenceName": "main"
-                            }
-                        ]
-                    }""",
+                    """
+{"count": 51,"mutation": "C3037T","mutationFrom": "C","mutationTo": "T","position": 3037,"proportion": 1,"sequenceName": "main"}
+{"count": 52,"mutation": "C14408T","mutationFrom": "C","mutationTo": "T","position": 14408,"proportion": 1,"sequenceName": "main"}
+                    """,
                 ),
         )
 
@@ -174,18 +148,10 @@ class SiloClientTest(
             response()
                 .withContentType(MediaType.APPLICATION_JSON_UTF_8)
                 .withBody(
-                    """{
-                        "queryResult": [
-                            {
-                              "primaryKey": "key1",
-                              "someSequenceName": "ABCD"
-                            },
-                            {
-                              "primaryKey": "key2",
-                              "someSequenceName": "DEFG"
-                            }
-                        ]
-                    }""",
+                    """
+                        {"primaryKey": "key1","someSequenceName": "ABCD"}
+                        {"primaryKey": "key2","someSequenceName": "DEFG"}
+                    """,
                 ),
         )
 
@@ -211,24 +177,10 @@ class SiloClientTest(
             response()
                 .withContentType(MediaType.APPLICATION_JSON_UTF_8)
                 .withBody(
-                    """{
-                        "queryResult": [
-                            {
-                                "age": 50,
-                                "country": "Switzerland",
-                                "date": "2021-02-23",
-                                "pango_lineage": "B.1.1.7",
-                                "qc_value": 0.95
-                            },
-                            {
-                                "age": 54,
-                                "country": "Switzerland",
-                                "date": "2021-03-19",
-                                "pango_lineage": "B.1.1.7",
-                                "qc_value": 0.94
-                            }
-                        ]
-                    }""",
+                    """
+{ "age": 50, "country": "Switzerland", "date": "2021-02-23", "pango_lineage": "B.1.1.7", "qc_value": 0.95 }
+{ "age": 54, "country": "Switzerland", "date": "2021-03-19", "pango_lineage": "B.1.1.7", "qc_value": 0.94 }
+                    """,
                 ),
         )
 
@@ -270,24 +222,10 @@ class SiloClientTest(
             response()
                 .withContentType(MediaType.APPLICATION_JSON_UTF_8)
                 .withBody(
-                    """{
-                        "queryResult": [
-                            {
-                                "count": 1,
-                                "insertedSymbols": "SGE",
-                                "position": 143,
-                                "insertion": "ins_S:247:SGE",
-                                "sequenceName": "S"
-                            },
-                            {
-                                "count": 2,
-                                "insertedSymbols": "EPE",
-                                "position": 214,
-                                "insertion": "ins_S:214:EPE",
-                                "sequenceName": "S"
-                            }
-                        ]
-                    }""",
+                    """
+{ "count": 1, "insertedSymbols": "SGE", "position": 143, "insertion": "ins_S:247:SGE", "sequenceName": "S" }
+{ "count": 2, "insertedSymbols": "EPE", "position": 214, "insertion": "ins_S:214:EPE", "sequenceName": "S" }
+                    """,
                 ),
         )
 
@@ -358,7 +296,7 @@ class SiloClientTest(
         )
 
         val exception = assertThrows<RuntimeException> { underTest.sendQuery(someQuery) }
-        assertThat(exception.message, containsString("value failed for JSON property"))
+        assertThat(exception.message, containsString("Could not parse response from silo"))
     }
 
     @Test
@@ -405,7 +343,7 @@ class SiloClientTest(
         expectQueryRequestAndRespondWith(
             response()
                 .withStatusCode(200)
-                .withBody("""{"queryResult": []}"""),
+                .withBody(""),
             Times.exactly(1),
         )
         expectQueryRequestAndRespondWith(
@@ -469,7 +407,7 @@ class SiloClientTest(
         expectQueryRequestAndRespondWith(
             response()
                 .withStatusCode(200)
-                .withBody("""{"queryResult": []}"""),
+                .withBody(""),
             Times.once(),
         )
         expectQueryRequestAndRespondWith(
