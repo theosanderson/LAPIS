@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+import java.util.stream.Stream
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -140,7 +141,7 @@ class LapisControllerCsvTest(
 
     @Test
     fun `GIVEN aggregated endpoint returns result with null values THEN CSV contains empty strings instead`() {
-        every { siloQueryModelMock.getAggregated(any()) } returns listOf(
+        every { siloQueryModelMock.getAggregated(any()) } returns  Stream.of(
             AggregationData(
                 1,
                 mapOf("firstKey" to TextNode("someValue"), "keyWithNullValue" to NullNode.instance),
@@ -160,7 +161,7 @@ class LapisControllerCsvTest(
 
     @Test
     fun `GIVEN details endpoint returns result with null values THEN CSV contains empty strings instead`() {
-        every { siloQueryModelMock.getDetails(any()) } returns listOf(
+        every { siloQueryModelMock.getDetails(any()) } returns  Stream.of(
             DetailsData(
                 mapOf(
                     "firstKey" to TextNode("some first value"),

@@ -18,6 +18,7 @@ import org.genspectrum.lapis.response.NucleotideMutationResponse
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.`is`
 import org.springframework.http.MediaType.APPLICATION_JSON_VALUE
+import java.util.stream.Stream
 
 data class MockDataCollection(
     val mockToReturnEmptyData: (SiloQueryModel) -> Unit,
@@ -35,14 +36,14 @@ data class MockDataCollection(
 
     companion object {
         inline fun <reified Arg, Data> create(
-            crossinline siloQueryModelMockCall: (SiloQueryModel) -> (Arg) -> List<Data>,
+            crossinline siloQueryModelMockCall: (SiloQueryModel) -> (Arg) -> Stream<Data>,
             modelData: List<Data>,
             expectedJson: String,
             expectedCsv: String,
             expectedTsv: String,
         ) = MockDataCollection(
-            { modelMock -> every { siloQueryModelMockCall(modelMock)(any()) } returns emptyList() },
-            { modelMock -> every { siloQueryModelMockCall(modelMock)(any()) } returns modelData },
+            { modelMock -> every { siloQueryModelMockCall(modelMock)(any()) } returns Stream.empty() },
+            { modelMock -> every { siloQueryModelMockCall(modelMock)(any()) } returns modelData.stream() },
             expectedJson,
             expectedCsv,
             expectedTsv,

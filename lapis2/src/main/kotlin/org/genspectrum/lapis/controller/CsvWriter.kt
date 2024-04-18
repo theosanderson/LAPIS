@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVPrinter
 import org.springframework.stereotype.Component
-import java.io.StringWriter
+import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody
+import java.util.stream.Stream
 
 interface CsvRecord {
     @JsonIgnore
@@ -17,29 +18,28 @@ interface CsvRecord {
 @Component
 class CsvWriter {
     fun write(
-        headers: Array<String>?,
-        data: List<CsvRecord>,
+        includeHeaders: Boolean,
+        data: Stream<out CsvRecord>,
         delimiter: Delimiter,
-    ): String {
-        val stringWriter = StringWriter()
+    ): StreamingResponseBody = StreamingResponseBody { stream->
+        var shouldWriteHeaders = includeHeaders
+
         CSVPrinter(
-            stringWriter,
+            stream.writer(),
             CSVFormat.DEFAULT.builder()
                 .setRecordSeparator("\n")
                 .setDelimiter(delimiter.value)
                 .setNullString("")
-                .also {
-                    when {
-                        headers != null -> it.setHeader(*headers)
-                    }
-                }
                 .build(),
         ).use {
             for (datum in data) {
+                if (shouldWriteHeaders) {
+                    it.printRecord(datum.getHeader())
+                    shouldWriteHeaders = false
+                }
                 it.printRecord(datum.getValuesList())
             }
         }
-        return stringWriter.toString().trimEnd('\n')
     }
 }
 

@@ -19,6 +19,7 @@ import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 import java.net.http.HttpResponse.BodyHandlers
+import java.util.stream.Stream
 
 private val log = KotlinLogging.logger {}
 
@@ -28,7 +29,7 @@ class SiloClient(
     private val dataVersion: DataVersion,
     private val requestContext: RequestContext,
 ) {
-    fun <ResponseType> sendQuery(query: SiloQuery<ResponseType>): List<ResponseType> {
+    fun <ResponseType> sendQuery(query: SiloQuery<ResponseType>): Stream<ResponseType> {
         val result = cachedSiloClient.sendQuery(query)
         dataVersion.dataVersion = result.dataVersion
 
@@ -89,8 +90,7 @@ class CachedSiloClient(
                             exception::class.toString() + " " + exception.message
                         throw RuntimeException(message, exception)
                     }
-                }
-                .toList(),
+                },
             dataVersion = getDataVersion(response),
         )
     }
@@ -172,7 +172,7 @@ class SiloUnavailableException(override val message: String, val retryAfter: Str
 
 data class WithDataVersion<ResponseType>(
     val dataVersion: String,
-    val queryResult: List<ResponseType>,
+    val queryResult: Stream<ResponseType>,
 )
 
 data class SiloErrorResponse(val error: String, val message: String)
