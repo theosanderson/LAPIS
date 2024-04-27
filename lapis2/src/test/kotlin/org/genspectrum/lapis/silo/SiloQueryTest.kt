@@ -362,6 +362,16 @@ class SiloQueryTest {
                 """,
                 ),
                 Arguments.of(
+                    StringEquals("theColumn", null),
+                    """
+                {
+                    "type": "StringEquals",
+                    "column": "theColumn",
+                    "value": null
+                }
+                """,
+                ),
+                Arguments.of(
                     PangoLineageEquals("fieldName", "ABC", includeSublineages = false),
                     """
                 {
@@ -380,6 +390,17 @@ class SiloQueryTest {
                     "column": "fieldName",
                     "value": "ABC",
                     "includeSublineages": true
+                }
+                """,
+                ),
+                Arguments.of(
+                    PangoLineageEquals("fieldName", null, includeSublineages = false),
+                    """
+                {
+                    "type": "PangoLineage",
+                    "column": "fieldName",
+                    "value": null,
+                    "includeSublineages": false
                 }
                 """,
                 ),
@@ -593,6 +614,58 @@ class SiloQueryTest {
                     """
                         {
                             "type": "BooleanEquals",
+                            "column": "theColumn",
+                            "value": null
+                        }
+                    """,
+                ),
+                Arguments.of(
+                    FloatEquals(
+                        column = "theColumn",
+                        value = 1.0,
+                    ),
+                    """
+                        {
+                            "type": "FloatEquals",
+                            "column": "theColumn",
+                            "value": 1.0
+                        }
+                    """,
+                ),
+                Arguments.of(
+                    FloatEquals(
+                        column = "theColumn",
+                        value = null,
+                    ),
+                    """
+                        {
+                            "type": "FloatEquals",
+                            "column": "theColumn",
+                            "value": null
+                        }
+                    """,
+                ),
+                Arguments.of(
+                    IntEquals(
+                        column = "theColumn",
+                        value = 1,
+                    ),
+                    """
+                        {
+                            "type": "IntEquals",
+                            "column": "theColumn",
+                            "value": 1
+                        }
+                    """,
+                ),
+                Arguments.of(
+                    IntEquals(
+                        column = "theColumn",
+                        value = null,
+                    ),
+                    """
+                        {
+                            "type": "IntEquals",
                             "column": "theColumn",
                             "value": null
                         }
